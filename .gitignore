@@ -1,0 +1,5 @@
+# Clion stuff
+.idea
+
+# Build
+cmake-build-debug
