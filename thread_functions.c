@@ -1,9 +1,10 @@
 
-#include "thread_functions.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
+
+#include "thread_functions.h"
+#include "linked_list.h"
 
 int virtual_mem_size;
 
@@ -12,6 +13,7 @@ void *Process(void *id) {
     FILE *fp;
     long pid = (long) id;
 
+    // Handle thread file
     char file_name[50] = "thread";
     // Add one to the process ID (since file names start at 1 and not 0)
     char tmp = pid + '1';
@@ -21,22 +23,20 @@ void *Process(void *id) {
     int line_count = 0;
     int data_count = 0;
     int virtual_address;
-    char command;
-    char reg;
+    // Random relates to unwanted whitespace or newlines
+    char command, reg, random;
     fp = fopen(file_name, "r");
     while (!feof(fp)) {
         if (line_count == 0) {
-            fscanf(fp, "%d", &virtual_mem_size);
+            fscanf(fp, "%d%c", &virtual_mem_size, &random);
             line_count += 1;
         } else {
             if (data_count == 0) {
-                fscanf(fp, "%c", &command);
-                printf("This is what command is -->%c\n\n", command);
+                fscanf(fp, "%c%c", &command, &random);
             } else if (data_count == 1) {
-                fscanf(fp, "%c", &reg);
-                printf("This is what reg is -->%c\n\n", reg);
+                fscanf(fp, "%c%c%c", &random, &reg, &random);
             } else {
-                fscanf(fp, "%d", &virtual_address);
+                fscanf(fp, "%d%c", &virtual_address, &random);
                 data_count = -1;
             }
             data_count += 1;
