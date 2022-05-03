@@ -16,7 +16,7 @@ void push(struct Node **head_ref, int new_data);
 
 /* Given a node prev_node, insert a new node after the given
 prev_node */
-void insertAfter(struct Node *prev_node, int new_data);
+void insert_after(struct Node *prev_node, int new_data);
 
 /* Given a reference (pointer to pointer) to the head
    of a list and an int, appends a new node at the end  */
@@ -25,10 +25,13 @@ void append(struct Node **head_ref, int new_data);
 /* Given a reference (pointer to pointer) to the head of a
    list and a key, deletes the first occurrence of key in
    linked list */
-void deleteNode(struct Node **head_ref, int key);
+void delete_node(struct Node **head_ref, int key);
 
 // This function prints contents of linked list starting
 // from the given node
-void printList(struct Node *node);
+void print_list(struct Node *node);
+
+// Change the data of a specific node
+void change_data(struct Node *node, int index, int new_data);
 
 #endif

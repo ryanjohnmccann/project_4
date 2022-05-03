@@ -8,6 +8,13 @@
 
 int virtual_mem_size;
 
+void init_registers() {
+    struct Node *regs = NULL;
+    for (int i = 0; i < 32; i++) {
+        push(&regs, -1);
+    }
+}
+
 void *Process(void *id) {
 
     FILE *fp;
@@ -26,6 +33,7 @@ void *Process(void *id) {
     // Random relates to unwanted whitespace or newlines
     char command, reg, random;
     fp = fopen(file_name, "r");
+    init_registers();
     while (!feof(fp)) {
         if (line_count == 0) {
             fscanf(fp, "%d%c", &virtual_mem_size, &random);
