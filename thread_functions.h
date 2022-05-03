@@ -1,8 +1,7 @@
-//
-// Created by ryan on 5/1/22.
-//
 
 #ifndef PROJECT_4_THREAD_FUNCTIONS_H
 #define PROJECT_4_THREAD_FUNCTIONS_H
 
-#endif //PROJECT_4_THREAD_FUNCTIONS_H
+void *Process(void *id);
+
+#endif

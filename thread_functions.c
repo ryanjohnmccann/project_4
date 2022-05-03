@@ -1,5 +1,8 @@
-//
-// Created by ryan on 5/1/22.
-//
 
 #include "thread_functions.h"
+
+#include <pthread.h>
+
+void *Process(void *id) {
+    pthread_exit((void *) id);
+}

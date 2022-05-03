@@ -1,10 +1,16 @@
+// TODO: Update comments and doc strings
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <semaphore.h>
+
+#include "thread_functions.h"
 
 char *input_file_name, *output_file_name;
-int random_seed;
-int mm_size, page_size, num_processes;
+int mm_size, page_size, num_processes, random_seed;
+sem_t output_sem, mem_sem;
 
 void handle_infile(const char *file_name) {
     FILE *fp;
@@ -32,11 +38,43 @@ void handle_infile(const char *file_name) {
 // Controls the program
 int main(int argc, char* argv[]) {
 
+    void *status;
+    int rc;
+
     input_file_name = argv[1];
     output_file_name = argv[2];
     random_seed = atoi(argv[3]);
 
     handle_infile(input_file_name);
 
-    return 0;
+    // TODO: Check this
+    // Init semaphores and threads
+    sem_init(&output_sem, 0, 0);
+    sem_init(&mem_sem, 0, 0);
+    pthread_t process_threads[num_processes];
+
+    // TODO: Check print statements
+    // Create threads
+    for (int i = 0; i < num_processes; i++) {
+        printf("Main: started producer %i\n", i);
+        long tmp_id = i;
+        rc = pthread_create(&process_threads[i], NULL, Process, (void *) tmp_id);
+        if (rc) {
+            printf("ERROR; return code from pthread_create() is %d\n", rc);
+            exit(-1);
+        }
+    }
+
+    // Join threads
+    for (int i = 0; i < num_processes; i++) {
+        rc = pthread_join(process_threads[i], &status);
+        if (rc) {
+            printf("ERROR; return code from pthread_join() is %d\n", rc);
+            exit(-1);
+        }
+        // TODO: Check print statement
+        printf("Main: producer %i joined\n", i);
+    }
+
+    pthread_exit(NULL);
 }
