@@ -1,4 +1,4 @@
-// TODO: Update comments and doc strings
+// TODO: Update comments, doc strings, and clean
 
 #include <stdio.h>
 #include <stdlib.h>
