@@ -21,14 +21,11 @@ void handle_infile(const char *file_name) {
     while (fgets(line, sizeof(line), fp)) {
         if (line_count == 0) {
             mm_size = atoi(line);
-        }
-        else if (line_count == 1) {
+        } else if (line_count == 1) {
             page_size = atoi(line);
-        }
-        else if (line_count == 2) {
+        } else if (line_count == 2) {
             num_processes = atoi(line);
         }
-        // TODO: Do I really need to read the other file names?
         line_count += 1;
     }
     fclose(fp);
@@ -36,7 +33,7 @@ void handle_infile(const char *file_name) {
 
 
 // Controls the program
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
     void *status;
     int rc;
