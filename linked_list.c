@@ -1,3 +1,4 @@
+// TODO: These only work for the default Node struct
 
 #include <stdio.h>
 #include <stdlib.h>

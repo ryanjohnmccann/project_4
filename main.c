@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     // TODO: Check print statements
     // Create threads
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < num_processes; i++) {
         printf("Main: started producer %i\n", i);
         long tmp_id = i;
         rc = pthread_create(&process_threads[i], NULL, Process, (void *) tmp_id);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Join threads
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < num_processes; i++) {
         rc = pthread_join(process_threads[i], &status);
         if (rc) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
