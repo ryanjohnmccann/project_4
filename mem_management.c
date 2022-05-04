@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mem_management.h"
 
@@ -88,10 +89,18 @@ void append_frame(struct Frame **head_ref, struct Frame *new_node) {
     last->next = new_node;
 }
 
-void change_frame_data(struct Frame *node, int index, int data) {
+void change_frame_data(struct Frame *node, int index, int address) {
     while (node != NULL) {
-        // TODO: Update, account for endianness as well
         if (node->index == index) {
+
+            unsigned int tmp = 0xF0000000;
+            unsigned int shift = 28;
+
+            for (int j = 0; j < 8; j++) {
+                node->data[j] = (tmp & address) >> shift;
+                tmp = tmp >> 4;
+                shift -= 4;
+            }
 
         }
         node = node->next;
@@ -99,8 +108,16 @@ void change_frame_data(struct Frame *node, int index, int data) {
 }
 
 void print_frames(struct Frame *node) {
-    // TODO: Update, print certain way
+    char print_value[8] = "";
+
     while (node != NULL) {
+        for (int i = 0; i < 8; i++) {
+            if (i == 0) {
+                printf("0x");
+            }
+            printf("%x", node->data[i]);
+        }
+        printf("\n");
         node = node->next;
     }
 }
@@ -112,6 +129,18 @@ void init_main_mem(int memory_size) {
     for (int i = 0; i < num_frames; i++) {
         // Generate 32-bit number
         int curr_address = rand();
-        printf("Here is the address -->0x%08x\n\n", curr_address);
+        struct Frame *tmp_frame = (struct Frame *) malloc(sizeof(struct Frame));
+
+        // Store in big-endian format
+        unsigned int tmp = 0xF0000000;
+        unsigned int shift = 28;
+        for (int j = 0; j < 8; j++) {
+            tmp_frame->data[j] = (tmp & curr_address) >> shift;
+            tmp = tmp >> 4;
+            shift -= 4;
+        }
+
+        append_frame(&frames, tmp_frame);
     }
+    print_frames(frames);
 }

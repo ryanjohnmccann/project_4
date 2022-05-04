@@ -9,8 +9,8 @@ struct PTE {
 
 struct Frame {
     int index;
-    // Expect 4 bytes, for 32 bit values
-    char data[4];
+    // Expect 8 bytes, for 32 bit values
+    char data[8];
     struct Frame *next;
 };
 
@@ -22,7 +22,7 @@ void print_page_table(struct PTE *node);
 
 void append_frame(struct Frame **head_ref, struct Frame *new_node);
 
-void change_frame_data(struct Frame *node, int index, int data);
+void change_frame_data(struct Frame *node, int index, int address);
 
 void print_frames(struct Frame *node);
 
