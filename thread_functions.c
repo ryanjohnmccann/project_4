@@ -4,18 +4,12 @@
 #include <pthread.h>
 
 #include "thread_functions.h"
-#include "linked_list.h"
 #include "mem_management.h"
 
-struct Node *regs = NULL;
 int virtual_mem_size;
 
-extern struct PTE *page_table;
-
+// TODO: Update
 void init_registers() {
-    for (int i = 0; i < 32; i++) {
-        push(&regs, -1);
-    }
 }
 
 void *Process(void *id) {

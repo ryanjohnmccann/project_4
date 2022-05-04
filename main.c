@@ -7,6 +7,7 @@
 #include <semaphore.h>
 
 #include "thread_functions.h"
+#include "mem_management.h"
 
 char *input_file_name, *output_file_name;
 int mm_size, page_size, num_processes, random_seed;
@@ -42,7 +43,12 @@ int main(int argc, char *argv[]) {
     output_file_name = argv[2];
     random_seed = atoi(argv[3]);
 
+    // TODO: Check if random seed exists: srand(time(0))
+    srand(random_seed);
+
     handle_infile(input_file_name);
+
+    init_main_mem(mm_size);
 
     // TODO: Check this
     // Init semaphores and threads
@@ -51,8 +57,9 @@ int main(int argc, char *argv[]) {
     pthread_t process_threads[num_processes];
 
     // TODO: Check print statements
+    // TODO: Change back to num processes
     // Create threads
-    for (int i = 0; i < num_processes; i++) {
+    for (int i = 0; i < 1; i++) {
         printf("Main: started producer %i\n", i);
         long tmp_id = i;
         rc = pthread_create(&process_threads[i], NULL, Process, (void *) tmp_id);
@@ -63,7 +70,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Join threads
-    for (int i = 0; i < num_processes; i++) {
+    for (int i = 0; i < 1; i++) {
         rc = pthread_join(process_threads[i], &status);
         if (rc) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
