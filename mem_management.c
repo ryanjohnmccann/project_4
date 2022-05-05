@@ -70,24 +70,16 @@ int find_page_num(int address) {
     return page_num >> shift_bits;
 }
 
-int remove_free_frame(int frame_number) {
+int find_free_frame() {
     for (int i = 0; i < num_frames; i++) {
-        if (i == frame_number) {
-            sem_wait(&mem_sem);
+        if (free_frames[i] == 1) {
             free_frames[i] = 0;
-            sem_post(&mem_sem);
+            return i;
         }
     }
-}
-
-void add_free_frame(int frame_number) {
-    for (int i = 0; i < num_frames; i++) {
-        if (i == frame_number) {
-            sem_wait(&mem_sem);
-            free_frames[i] = 1;
-            sem_post(&mem_sem);
-        }
-    }
+    // All the frames are taken, we need to evict
+    // TODO: Randomly evicting for now, update this
+    return 0;
 }
 
 void execute_command(char command, int reg_num, int virtual_address, long pid) {
@@ -102,10 +94,20 @@ void execute_command(char command, int reg_num, int virtual_address, long pid) {
     if (!in_memory) {
         fprintf(output_fp, "P%ld: page %d not resident in memory\n", pid, des_page);
         // Page is now resident in memory
+        int curr_frame = find_free_frame();
+        // Update valid bit
         change_pte_data(page_table, des_page, 1, 'v');
+        // Update the frame
+        change_pte_data(page_table, des_page, curr_frame, 'f');
+        fprintf(output_fp, "P%ld: new translation from page %d to frame %d\n", pid, des_page, curr_frame);
     } else {
-        fprintf(output_fp, "P%ld: valid translation from\n", pid);
+        int curr_frame = get_pte_data(page_table, des_page, 'f');
+        fprintf(output_fp, "P%ld: valid translation from page %d to frame %d\n", pid, des_page,
+                curr_frame);
     }
+    // TODO: Translate physical address
+    // TODO: Read data into the register and print it
+    fprintf(output_fp, "translated VA 0x%08x to PA 0x%08x\n");
     sem_post(&output_sem);
 
 }

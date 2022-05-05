@@ -8,6 +8,8 @@
 #include "thread_functions.h"
 #include "mem_management.h"
 
+// TODO: Pointers to both page tables in order to modify them on eviction (could check every time for now)
+
 FILE *output_fp;
 char *input_file_name, *output_file_name;
 int mm_size, page_size, num_processes, random_seed, *free_frames;
