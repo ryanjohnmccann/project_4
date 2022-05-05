@@ -1,16 +1,25 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 
+#include "list_functions.h"
 #include "thread_functions.h"
 #include "mem_management.h"
 
+struct Register *regs;
 int virtual_mem_size;
 
 void init_registers() {
+    regs = NULL;
     for (int i = 0; i < 32; i++) {
-        
+        struct Register *tmp_reg = (struct Register *) malloc(sizeof(struct Register));
+        tmp_reg->index = i;
+        for (int j = 0; j < 8; j++) {
+            tmp_reg->data[j] = 0;
+        }
+        append_register(&regs, tmp_reg);
     }
 }
 
@@ -28,6 +37,7 @@ void *Process(void *id) {
 
     init_registers();
 
+    // TODO: Register number could be two values
     int line_count = 0;
     int data_count = 0;
     int virtual_address;
@@ -46,6 +56,7 @@ void *Process(void *id) {
                 fscanf(fp, "%c%c%c", &random, &reg, &random);
             } else {
                 fscanf(fp, "%d%c", &virtual_address, &random);
+
                 data_count = -1;
             }
             data_count += 1;
