@@ -9,6 +9,7 @@
 #include "thread_functions.h"
 #include "mem_management.h"
 
+FILE *output_fp;
 char *input_file_name, *output_file_name;
 int mm_size, page_size, num_processes, random_seed;
 sem_t output_sem, mem_sem;
@@ -56,11 +57,14 @@ int main(int argc, char *argv[]) {
     sem_init(&mem_sem, 0, 0);
     pthread_t process_threads[num_processes];
 
-    // TODO: Check print statements
-    // TODO: Change back to num processes
+    // Output file
+    output_fp = fopen(output_file_name, "w");
+    fclose(output_fp);
+    output_fp = fopen(output_file_name, "a");
+
     // Create threads
-    for (int i = 0; i < 1; i++) {
-        printf("Main: started producer %i\n", i);
+    for (int i = 0; i < num_processes; i++) {
+        fprintf(output_fp, "Process %i started\n", i);
         long tmp_id = i;
         rc = pthread_create(&process_threads[i], NULL, Process, (void *) tmp_id);
         if (rc) {
@@ -70,15 +74,16 @@ int main(int argc, char *argv[]) {
     }
 
     // Join threads
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < num_processes; i++) {
         rc = pthread_join(process_threads[i], &status);
         if (rc) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
             exit(-1);
         }
-        // TODO: Check print statement
-        printf("Main: producer %i joined\n", i);
+        fprintf(output_fp, "Process %i complete\n", i);
     }
 
+    fprintf(output_fp, "Main: program completed\n");
+    fclose(output_fp);
     pthread_exit(NULL);
 }

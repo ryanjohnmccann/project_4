@@ -10,6 +10,7 @@ struct PTE *page_table;
 struct Frame *frames;
 
 extern int page_size;
+extern FILE *output_fp;
 
 void init_page_table(int memory_size) {
     int num_pages = memory_size / page_size;
@@ -48,4 +49,8 @@ void init_main_mem(int memory_size) {
 
         append_frame(&frames, tmp_frame);
     }
+}
+
+void execute_command(char command, int reg_num, int virtual_address, long pid) {
+    fprintf(output_fp, "P%ld: OPERATION: %c r%i %i\n", pid, command, reg_num, virtual_address);
 }
