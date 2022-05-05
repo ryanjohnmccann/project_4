@@ -10,6 +10,7 @@
 
 struct PTE *page_table;
 struct Frame *frames;
+int num_frames;
 
 extern int page_size, *free_frames;
 extern FILE *output_fp;
@@ -32,7 +33,7 @@ void init_page_table(int memory_size) {
 }
 
 void init_main_mem(int memory_size) {
-    int num_frames = memory_size / page_size;
+    num_frames = memory_size / page_size;
     // Indexes will be used to determine if the frame is free, e.g. if index 0 = 1, then that frame is free!
     free_frames = malloc(sizeof(int) * num_frames);
     frames = NULL;
@@ -69,16 +70,26 @@ int find_page_num(int address) {
     return page_num >> shift_bits;
 }
 
-void remove_free_frame() {
-
+int remove_free_frame(int frame_number) {
+    for (int i = 0; i < num_frames; i++) {
+        if (i == frame_number) {
+            sem_wait(&mem_sem);
+            free_frames[i] = 0;
+            sem_post(&mem_sem);
+        }
+    }
 }
 
-void add_free_frame() {
-
+void add_free_frame(int frame_number) {
+    for (int i = 0; i < num_frames; i++) {
+        if (i == frame_number) {
+            sem_wait(&mem_sem);
+            free_frames[i] = 1;
+            sem_post(&mem_sem);
+        }
+    }
 }
 
-// TODO: Update output file semaphore to be as interleaving as possible
-// TODO: If all frames are full, eject randomly and then do it correctly if you have time
 void execute_command(char command, int reg_num, int virtual_address, long pid) {
     sem_wait(&output_sem);
     fprintf(output_fp, "P%ld: OPERATION: %c r%i %i\n", pid, command, reg_num, virtual_address);
@@ -87,12 +98,14 @@ void execute_command(char command, int reg_num, int virtual_address, long pid) {
     int des_page = find_page_num(virtual_address);
     int in_memory = get_pte_data(page_table, des_page, 'v');
 
+    sem_wait(&output_sem);
     if (!in_memory) {
-        sem_wait(&output_sem);
         fprintf(output_fp, "P%ld: page %d not resident in memory\n", pid, des_page);
-        sem_post(&output_sem);
+        // Page is now resident in memory
+        change_pte_data(page_table, des_page, 1, 'v');
     } else {
-
+        fprintf(output_fp, "P%ld: valid translation from\n", pid);
     }
+    sem_post(&output_sem);
 
 }
