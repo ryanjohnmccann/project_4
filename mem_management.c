@@ -51,6 +51,12 @@ void init_main_mem(int memory_size) {
     }
 }
 
+int translate_address(int virtual_address) {
+    int physical_address;
+
+    return physical_address;
+}
+
 void execute_command(char command, int reg_num, int virtual_address, long pid) {
     fprintf(output_fp, "P%ld: OPERATION: %c r%i %i\n", pid, command, reg_num, virtual_address);
 }

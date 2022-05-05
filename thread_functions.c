@@ -37,12 +37,11 @@ void *Process(void *id) {
 
     init_registers();
 
-    // TODO: Register number could be have two characters (10 and up)
     int line_count = 0;
     int data_count = 0;
-    int virtual_address;
+    int virtual_address, reg_num;
     // Random relates to unwanted whitespace or newlines
-    char command, reg_num, random;
+    char command, random;
     fp = fopen(file_name, "r");
     while (!feof(fp)) {
         if (line_count == 0) {
@@ -53,7 +52,7 @@ void *Process(void *id) {
             if (data_count == 0) {
                 fscanf(fp, "%c%c", &command, &random);
             } else if (data_count == 1) {
-                fscanf(fp, "%c%c%c", &random, &reg_num, &random);
+                fscanf(fp, "%c%d%c", &random, &reg_num, &random);
             } else {
                 fscanf(fp, "%d%c", &virtual_address, &random);
                 execute_command(command, reg_num, virtual_address, pid);
