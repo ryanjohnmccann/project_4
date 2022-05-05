@@ -22,7 +22,7 @@ void print_page_table(struct PTE *node);
 
 void append_frame(struct Frame **head_ref, struct Frame *new_node);
 
-void change_frame_data(struct Frame *node, int index, int address);
+void change_frame_data(struct Frame *node, int index, unsigned int address);
 
 void print_frames(struct Frame *node);
 

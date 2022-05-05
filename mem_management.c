@@ -89,7 +89,7 @@ void append_frame(struct Frame **head_ref, struct Frame *new_node) {
     last->next = new_node;
 }
 
-void change_frame_data(struct Frame *node, int index, int address) {
+void change_frame_data(struct Frame *node, int index, unsigned int address) {
     while (node != NULL) {
         if (node->index == index) {
 
@@ -108,8 +108,6 @@ void change_frame_data(struct Frame *node, int index, int address) {
 }
 
 void print_frames(struct Frame *node) {
-    char print_value[8] = "";
-
     while (node != NULL) {
         for (int i = 0; i < 8; i++) {
             if (i == 0) {
@@ -130,6 +128,7 @@ void init_main_mem(int memory_size) {
         // Generate 32-bit number
         int curr_address = rand();
         struct Frame *tmp_frame = (struct Frame *) malloc(sizeof(struct Frame));
+        tmp_frame->index = i;
 
         // Store in big-endian format
         unsigned int tmp = 0xF0000000;
@@ -142,5 +141,4 @@ void init_main_mem(int memory_size) {
 
         append_frame(&frames, tmp_frame);
     }
-    print_frames(frames);
 }

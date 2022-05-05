@@ -8,8 +8,10 @@
 
 int virtual_mem_size;
 
-// TODO: Update
 void init_registers() {
+    for (int i = 0; i < 32; i++) {
+        
+    }
 }
 
 void *Process(void *id) {
