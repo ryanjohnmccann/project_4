@@ -50,6 +50,32 @@ void change_pte_data(struct PTE *node, int index, int data, char data_select) {
     }
 }
 
+int get_pte_data(struct PTE *node, int index, char data_select) {
+    while (node != NULL) {
+        if (node->index == index) {
+            // Valid bit
+            if (data_select == 'v') {
+                return node->valid;
+            }
+                // Reference bit
+            else if (data_select == 'r') {
+                return node->reference;
+            }
+                // Dirty bit
+            else if (data_select == 'd') {
+                return node->dirty;
+            }
+                // Frame number
+            else if (data_select == 'f') {
+                return node->frame;
+            }
+        }
+        node = node->next;
+    }
+    printf("INVALID RETURN FROM GET PTE DATA FUNCTION\n\n");
+    return -1;
+}
+
 void print_page_table(struct PTE *node) {
     while (node != NULL) {
         printf("Index: %d\tValid bit: %d\tReference bit: %d\tDirty bit: %d\tFrame: %d\n\n", node->index,

@@ -24,6 +24,8 @@ void append_pte(struct PTE **head_ref, struct PTE *new_node);
 
 void change_pte_data(struct PTE *node, int index, int data, char data_select);
 
+int get_pte_data(struct PTE *node, int index, char data_select);
+
 void print_page_table(struct PTE *node);
 
 void append_frame(struct Frame **head_ref, struct Frame *new_node);

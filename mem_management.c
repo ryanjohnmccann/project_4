@@ -11,8 +11,7 @@
 struct PTE *page_table;
 struct Frame *frames;
 
-extern char *free_frames;
-extern int page_size;
+extern int page_size, *free_frames;
 extern FILE *output_fp;
 extern sem_t output_sem, mem_sem;
 
@@ -34,10 +33,13 @@ void init_page_table(int memory_size) {
 
 void init_main_mem(int memory_size) {
     int num_frames = memory_size / page_size;
-    free_frames = malloc(sizeof(char) * (char) num_frames);
+    // Indexes will be used to determine if the frame is free, e.g. if index 0 = 1, then that frame is free!
+    free_frames = malloc(sizeof(int) * num_frames);
     frames = NULL;
 
     for (int i = 0; i < num_frames; i++) {
+        // Init all frames to be free
+        free_frames[i] = 1;
         // Generate 32-bit number
         int curr_address = rand();
         struct Frame *tmp_frame = (struct Frame *) malloc(sizeof(struct Frame));
@@ -67,11 +69,30 @@ int find_page_num(int address) {
     return page_num >> shift_bits;
 }
 
+void remove_free_frame() {
+
+}
+
+void add_free_frame() {
+
+}
+
+// TODO: Update output file semaphore to be as interleaving as possible
+// TODO: If all frames are full, eject randomly and then do it correctly if you have time
 void execute_command(char command, int reg_num, int virtual_address, long pid) {
     sem_wait(&output_sem);
     fprintf(output_fp, "P%ld: OPERATION: %c r%i %i\n", pid, command, reg_num, virtual_address);
     sem_post(&output_sem);
 
     int des_page = find_page_num(virtual_address);
+    int in_memory = get_pte_data(page_table, des_page, 'v');
+
+    if (!in_memory) {
+        sem_wait(&output_sem);
+        fprintf(output_fp, "P%ld: page %d not resident in memory\n", pid, des_page);
+        sem_post(&output_sem);
+    } else {
+
+    }
 
 }
