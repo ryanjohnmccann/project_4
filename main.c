@@ -11,7 +11,7 @@
 
 FILE *output_fp;
 char *input_file_name, *output_file_name;
-int mm_size, page_size, num_processes, random_seed;
+int mm_size, page_size, num_processes, random_seed, *free_frames;
 sem_t output_sem, mem_sem;
 
 void handle_infile(const char *file_name) {
@@ -44,17 +44,19 @@ int main(int argc, char *argv[]) {
     output_file_name = argv[2];
     random_seed = atoi(argv[3]);
 
-    // TODO: Check if random seed exists: srand(time(0))
-    srand(random_seed);
+    if (random_seed != NULL) {
+        srand(random_seed);
+    } else {
+        srand(time(0));
+    }
 
     handle_infile(input_file_name);
 
     init_main_mem(mm_size);
 
-    // TODO: Check this
     // Init semaphores and threads
-    sem_init(&output_sem, 0, 0);
-    sem_init(&mem_sem, 0, 0);
+    sem_init(&output_sem, 0, 1);
+    sem_init(&mem_sem, 0, 1);
     pthread_t process_threads[num_processes];
 
     // Output file
@@ -64,7 +66,9 @@ int main(int argc, char *argv[]) {
 
     // Create threads
     for (int i = 0; i < num_processes; i++) {
+        sem_wait(&output_sem);
         fprintf(output_fp, "Process %i started\n", i);
+        sem_post(&output_sem);
         long tmp_id = i;
         rc = pthread_create(&process_threads[i], NULL, Process, (void *) tmp_id);
         if (rc) {
@@ -80,7 +84,9 @@ int main(int argc, char *argv[]) {
             printf("ERROR; return code from pthread_join() is %d\n", rc);
             exit(-1);
         }
+        sem_wait(&output_sem);
         fprintf(output_fp, "Process %i complete\n", i);
+        sem_post(&output_sem);
     }
 
     fprintf(output_fp, "Main: program completed\n");

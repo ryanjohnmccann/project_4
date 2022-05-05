@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <semaphore.h>
+#include <math.h>
 
 #include "list_functions.h"
 #include "mem_management.h"
@@ -9,8 +11,10 @@
 struct PTE *page_table;
 struct Frame *frames;
 
+extern char *free_frames;
 extern int page_size;
 extern FILE *output_fp;
+extern sem_t output_sem, mem_sem;
 
 void init_page_table(int memory_size) {
     int num_pages = memory_size / page_size;
@@ -30,6 +34,7 @@ void init_page_table(int memory_size) {
 
 void init_main_mem(int memory_size) {
     int num_frames = memory_size / page_size;
+    free_frames = malloc(sizeof(char) * (char) num_frames);
     frames = NULL;
 
     for (int i = 0; i < num_frames; i++) {
@@ -51,12 +56,22 @@ void init_main_mem(int memory_size) {
     }
 }
 
-int translate_address(int virtual_address) {
-    int physical_address;
+int find_page_num(int address) {
+    int page_num, shift_bits = 0;
+    unsigned int reference = 0xFFFFFFFF;
+    while (pow(2, shift_bits) < page_size) {
+        shift_bits += 1;
+    }
 
-    return physical_address;
+    page_num = (reference << shift_bits) & address;
+    return page_num >> shift_bits;
 }
 
 void execute_command(char command, int reg_num, int virtual_address, long pid) {
+    sem_wait(&output_sem);
     fprintf(output_fp, "P%ld: OPERATION: %c r%i %i\n", pid, command, reg_num, virtual_address);
+    sem_post(&output_sem);
+
+    int des_page = find_page_num(virtual_address);
+
 }

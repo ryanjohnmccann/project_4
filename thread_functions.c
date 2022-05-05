@@ -55,7 +55,9 @@ void *Process(void *id) {
                 fscanf(fp, "%c%d%c", &random, &reg_num, &random);
             } else {
                 fscanf(fp, "%d%c", &virtual_address, &random);
+
                 execute_command(command, reg_num, virtual_address, pid);
+
                 data_count = -1;
             }
             data_count += 1;
