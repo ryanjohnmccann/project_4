@@ -107,7 +107,7 @@ void execute_command(char command, int reg_num, int virtual_address, long pid) {
     }
     // TODO: Translate physical address
     // TODO: Read data into the register and print it
-    fprintf(output_fp, "translated VA 0x%08x to PA 0x%08x\n");
+    fprintf(output_fp, "translated VA 0x%08x to PA 0x%08x\n", virtual_address);
     sem_post(&output_sem);
 
 }

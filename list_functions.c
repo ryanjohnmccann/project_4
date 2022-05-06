@@ -117,6 +117,25 @@ void change_frame_data(struct Frame *node, int index, unsigned int address) {
     }
 }
 
+unsigned int get_frame_data(struct Frame *node, int index) {
+    while (node != NULL) {
+
+        unsigned int tmp = 0xF0000000;
+        unsigned int res_value = 0x00000000;
+
+        if (node->index == index) {
+            for (int i = 0; i < 8; i++) {
+                res_value = tmp & node->data[i];
+                tmp = tmp >> 4;
+            }
+            return res_value;
+        }
+        node = node->next;
+    }
+    printf("INVALID RETURN FROM GET FRAME DATA FUNCTION\n\n");
+    return -1;
+}
+
 void print_frames(struct Frame *node) {
     while (node != NULL) {
         for (int i = 0; i < 8; i++) {
